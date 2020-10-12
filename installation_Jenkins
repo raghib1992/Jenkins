@@ -1,0 +1,63 @@
+## Install Jenkins using Docker Image
+
+
+# Download Jenkins Docker Image   #DOcker uses Animech
+docker pull Jenkins
+
+# to check where docker savin gthe file
+docker info | grep -i root
+
+# to check how much space docker is taking
+du -sh /var/lib/docker
+
+
+# TO run jenkins Image
+  1. make directory
+  mkdir jenkins-data
+  2. make sample file
+----------------------------------------------
+  vi docker-compose.yaml
+## Define which services we run
+
+version: '1.27.4'
+services:
+        jenkins:
+                container_name: jenkins
+                image: jenkins
+                ports:
+                        - "8080:8080"
+                volumes:
+                        - "$PWD/jenkins-home:/var/jenkins_home"
+                networks:
+                        - net
+
+networks:
+  net:
+  --------------------------------------------------------------
+
+
+# services that read Docker compose definition and create it
+docker-compose up -d
+
+# TO CHECK container
+docker -ps
+
+
+# to checks logs for certain container
+docker logs -f <image name>
+
+
+# to stop jenkins service
+docker-compose stop
+
+# to start service 
+docker-compose start
+
+# to completely remove the service
+docker-compose down 
+
+# to start service from volumes
+docker-compose up -d
+
+
+
