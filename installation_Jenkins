@@ -59,5 +59,6 @@ docker-compose down
 # to start service from volumes
 docker-compose up -d
 
-
+# to enter into container
+docker exec -ti jenkins bash
 
