@@ -1,0 +1,33 @@
+1.  create folder a save the file
+2.  create a service for a docker, we need image
+3. create a file for imafe
+    vi DOckerfile
+    FROM centos
+
+    RUN yum install openssh-server -y
+
+    RUN useradd nadim && \
+        echo "nadim:qwert" | chpasswd && \
+        mkdir /home/nadim/.ssh && \
+        chmod 700 /home/nadim/.ssh
+
+    COPY remote-key.pub /home/nadim/.ssh/authorized_keys
+
+    RUN chown nadim:nadim -R /home/nadim/.ssh/ && \
+        chmod 600 /home/nadim/.ssh/authorized_keys
+
+    RUN ssh-keygen -A
+
+    CMD /usr/sbin/ssh -D
+
+
+
+docker-compose.yml
+  remote_host:
+    container_name: remote-host
+    image: remote-host
+    build:
+      context: Centos
+    networks:
+      - net
+
