@@ -1,0 +1,100 @@
+plugin: pipeline
+
+pipeline {
+    agent any       #docker or any
+    
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Hello world!' 
+            }
+        }
+        stage('test') {
+            steps {
+                echo 'Testing!' 
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deployinh!' 
+            }
+        }
+    }
+    
+}
+
+
+
+1. pipeline {
+    agent any
+    
+    stages {
+        stage('Build') {
+            steps {
+                sh 'echo "My First Pipeline!"'
+                sh '''
+                  echo "By the way, I can do more stuff in here"
+                  ls -lah
+                '''
+            }
+        }
+    }
+    
+}
+
+3.
+pipeline {
+    agent any
+    
+    stages {
+        stage('Build') {
+            steps {
+                retry(3){
+                    sh 'I am testing retry' 
+                }
+       
+            }
+        }
+    }
+    
+}
+
+4.
+pipeline {
+    agent any
+    
+    stages {
+        stage('Build') {
+            steps {
+                retry(3){
+                    sh 'echo "I am testing retry"' 
+                }
+                
+                timeout(time: 3, unit: 'SECONDS'){
+                    sh 'sleep 5'
+                }
+       
+            }
+        }
+    }
+    
+}
+
+
+5. 
+pipeline {
+    agent any
+    
+    
+    environment {
+        NAME= "Raghib"
+        LASTNAME= "Nadim"
+    }
+    stages {
+        stage('Build') {
+            steps {
+                    sh 'echo "$NAME $LASTNAME is testing variable"' 
+            }
+        }
+    }
+}
