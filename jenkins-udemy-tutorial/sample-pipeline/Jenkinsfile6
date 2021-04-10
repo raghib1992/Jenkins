@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh 'echo "My First Pipeline"'
+            }
+        }
+    }
+    post {
+        always {
+            echo 'ALWAYS........'
+        }
+        success {
+            echo 'SUCCESS.......'   
+        }
+        failure {
+            echo 'FAILURE.......'
+        }
+        unstable {
+            echo 'UNSTABLE......'
+        }
+    }
+}

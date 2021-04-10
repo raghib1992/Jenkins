@@ -1,0 +1,21 @@
+
+
+# Install and configure tomcat
+# to change port conf server.xml connector
+# to start run startup.sh file
+# to stop run shutdown.sh file
+# to change role and password and user name   ## conf tomcat-user.xml    rolename manager-script admin-gui     and uncomment it 
+# shutdown and restrt by running file
+
+
+
+## install copy artifact and deploy to container plugins
+plugins name "copy artifact plugin" "Deploy to container plugin"
+
+
+staging project
+build use other project artifact 
+post build == Deploy war/ear to container
+
+
+post build of first project build to stageproject

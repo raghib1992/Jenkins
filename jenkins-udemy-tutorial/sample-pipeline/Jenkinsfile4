@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+       
+    environment {
+        NAME = "Raghib"
+        LAST_NAME = "Nadim"
+    }
+
+stages {
+    stage('Build') {
+        steps {
+            sh 'echo "My First Pipeline" > /tmp/pipeline.txt'
+                sh '''
+                    echo "Hello WOrld from $NAME $LAST_NAME" >> /tmp/pipeline.txt
+                    cat /tmp/pipeline.txt
+                    pwd
+                    whoami
+                    ls -la
+                '''
+            }
+        }
+    }
+}

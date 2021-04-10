@@ -1,0 +1,6 @@
+## Install check style plugins
+plugins name is "checkstyle"
+
+## add checkstyle in build section
+
+## aslo create post build action to produce report by checkstyle

@@ -1,4 +1,4 @@
-# Jenkins
+# Jenkins on Ubuntu 
 
 ## To install Java SE development Kit
 # Configure Java_Home on Linux:
@@ -59,3 +59,23 @@ sudo apt-get install jenkins
 
 # If an error is reported, “jenkins : Depends: daemon but it is not installable”, add the "universe" apt repository of community maintained free and open source software for Ubuntu by executing this command after sudo apt-get update:
         sudo add-apt-repository universe
+
+
+
+## Install maven
+download Maven Integration plugins
+download git plugins
+ ## location of workspce
+ /var/jenkins_home/workspace
+
+# install tomcat container
+
+# install copy artifact plugins
+# install deploy to container
+
+
+## for ssh setting in jenkins
+configure system
+
+## install ansible plugins
+## install ansicolor
