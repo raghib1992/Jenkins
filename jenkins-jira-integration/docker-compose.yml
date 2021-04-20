@@ -1,0 +1,27 @@
+version: '3'
+services:
+  jenkins:
+    container_name: jenkins
+    image: jenkins:raghib
+    build:
+      context: .   
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock 
+    networks:
+      - net
+
+  nginx:
+    image: nginx:1.18
+    container_name: nginx-docker
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - $PWD/nginx_home:/etc/nginx
+    networks:
+      - net
+
+networks:
+  net:
