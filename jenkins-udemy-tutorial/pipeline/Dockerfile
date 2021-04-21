@@ -20,4 +20,9 @@ RUN apt-get update && \
 RUN apt-get update && \
     apt-get install -y docker-ce docker-ce-cli containerd.io
 
+RUN apt-get install -y wget unzip && \
+    wget https://releases.hashicorp.com/terraform/0.14.10/terraform_0.14.10_linux_amd64.zip && \
+    unzip terraform_0.14.10_linux_amd64.zip && \
+    mv terraform /usr/bin
+
 USER jenkins 

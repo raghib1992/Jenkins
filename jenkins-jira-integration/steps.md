@@ -19,7 +19,7 @@
 
 ## Manage Plugins
 
-# Plugins name "Atlassian Jira Software Cloud"
+# Plugins name "Atlassian Jira Software Cloud" + "JIRA Trigger" + "JIRA"
 # Manage Jenkins > Configure System screen and scroll to the Jira Software Cloud integration section.
 # Select Add Jira Cloud Site > Jira Cloud Site. The Site name, ClientID, and Secret fields display.
     # Enter the following details:
@@ -35,7 +35,7 @@
 # Select Save.
 *******************
 ## Generate snippets
-
+*******************
 # Go into a specific pipeline in Jenkins.
 
 # From the left-hand menu, select Pipeline Syntax.
@@ -43,4 +43,6 @@
 # In the Snippet Generator, select jiraSendDeploymentInfo or jiraSendBuildInfo, or checkGatingStatus from the dropdown list of Sample Steps and fill in the relevant details.
 
 # Select Generate Pipeline Script and copy/paste the output into your Jenkinsfile, wherever you want to notify Jira
+***************************************************************************************************************************
+***************************************************************************************************************************
 
