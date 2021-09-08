@@ -65,12 +65,13 @@ pipeline {
                         stage (entry.key) {
                             // region = processInputParams(awsCityRegionMap, region)
                             sh """
-                                pwd;ls -l
+                                path = `pwd`
+                                cd ${path}/jenkins-loop;ls -l
                                 echo region = \\\"${entry.value}\\\" >> terraform.tfvars
-                                jenkins-loop/${terraformCmd} init
-                                jenkins-loop/${terraformCmd} plan -out tfplan -input=false
-                                jenkins-loop/${terraformCmd} show -no-color tfplan > tfplan.txt
-                                jenkins-loop/${terraformCmd} apply -input=false tfplan
+                                ${terraformCmd} init
+                                ${terraformCmd} plan -out tfplan -input=false
+                                ${terraformCmd} show -no-color tfplan > tfplan.txt
+                                ${terraformCmd} apply -input=false tfplan
                                 cat jenkins-loop/terraform.tfvars
                                 """
                         }
