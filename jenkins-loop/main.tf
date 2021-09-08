@@ -12,6 +12,6 @@ resource "aws_instance" "test" {
   ami = data.aws_ami.amazon-linux-2.id
   instance_type = "t3.micro"
   tags = {
-    Name = "HelloWorld"
+    Name = var.region
   }
 }
