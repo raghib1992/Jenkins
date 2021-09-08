@@ -1,7 +1,7 @@
 // @Library('saas-shlib') _
 
-// import groovy.json.JsonSlurper
-// import org.apache.commons.codec.digest.DigestUtils
+import groovy.json.JsonSlurper
+import org.apache.commons.codec.digest.DigestUtils
 
 def map = [
         "Hong Kong" : "ap-east-1",
@@ -9,29 +9,23 @@ def map = [
         "Paris" : "eu-west-3",
         "Stockholm" : "eu-north-1"
 ]
-// def cityList = awsCityRegionMap.keySet().toList()
-// def region = null
+def cityList = awsCityRegionMap.keySet().toList()
+def region = null
 // def IS_NEW_BRANCH = true
-// def terraformCmd = 'terraform'
+def terraformCmd = 'terraform'
 
-// def processInputParams(awsCityRegionMap, region) {
-//     if (!awsCityRegionMap.containsKey(city)) {
-//         currentBuild.result = 'ABORTED'
-//         error('city parameter provided can\'t be matched with any AWS region available, double check that the city is available in AWS!')
-//     }
-//     else {
-//         region = awsCityRegionMap[city]
-//         echo "AWS region for deployment is ${region}"
-//     }
-//     echo 'Validation completed successfully!'
-//     return region
-// }
-
-// def map = [
-//     stageA: 'ap-south-1',
-//     StageB: 'eu-west-3',
-//     stageC: 'eu-north-1'
-// ]
+def processInputParams(awsCityRegionMap, region) {
+    if (!awsCityRegionMap.containsKey(city)) {
+        currentBuild.result = 'ABORTED'
+        error('city parameter provided can\'t be matched with any AWS region available, double check that the city is available in AWS!')
+    }
+    else {
+        region = awsCityRegionMap[city]
+        echo "AWS region for deployment is ${region}"
+    }
+    echo 'Validation completed successfully!'
+    return region
+}
 
 pipeline {
     agent any
@@ -42,12 +36,12 @@ pipeline {
                 script {
                     map.each { entry ->
                         stage (entry.key) {
+                            region = processInputParams(awsCityRegionMap, region)
                             sh """
                                 echo region = \\\"${entry.value}\\\" >> terraform.tfvars
                                 terraform -chdir=jenkins-loop init
                                 terraform -chdir=jenkins-loop plan -out tfplan -input=false
                                 terraform -chdir=jenkins-loop show tfplan >> tfplan.txt
-                                terraform -chdir=jenkins-loop apply -auto-approve -input=false
                                 """
                         }
 
