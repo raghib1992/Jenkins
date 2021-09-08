@@ -4,27 +4,10 @@
 // import org.apache.commons.codec.digest.DigestUtils
 
 def map = [
-        "N. Virginia" : "us-east-1",
-        "Ohio" : "us-east-2",
-        "N. California" : "us-west-1",
-        "Oregon" : "us-west-2",
-        "Cape Town" : "af-south-1",
         "Hong Kong" : "ap-east-1",
         "Mumbai" : "ap-south-1",
-        "Osaka" : "ap-northeast-3",
-        "Seoul" : "ap-northeast-2",
-        "Singapore" : "ap-southeast-1",
-        "Sydney" : "ap-southeast-2",
-        "Tokyo" : "ap-northeast-1",
-        "Central" : "ca-central-1",
-        "Frankfurt" : "eu-central-1",
-        "Ireland" : "eu-west-1",
-        "London" : "eu-west-2",
-        "Milan" : "eu-south-1",
         "Paris" : "eu-west-3",
-        "Stockholm" : "eu-north-1",
-        "Bahrain" : "me-south-1",
-        "Sao Paulo" : "sa-east-1"
+        "Stockholm" : "eu-north-1"
 ]
 // def cityList = awsCityRegionMap.keySet().toList()
 // def region = null
@@ -61,8 +44,10 @@ pipeline {
                         stage (entry.key) {
                             sh """
                                 echo region = \\\"${entry.value}\\\" >> terraform.tfvars
-                                terraform init
-                                cat jenkins-loop/terraform.tfvars
+                                terraform -chdir=jenkins-loop init
+                                terraform -chdir=jenkins-loop plan -out tfplan -input=false
+                                terraform -chdir=jenkins-loop show tfplan >> tfplan.txt
+                                terraform -chdir=jenkins-loop apply -auto-approve -input=false
                                 """
                         }
 
