@@ -3,7 +3,7 @@
 import groovy.json.JsonSlurper
 import org.apache.commons.codec.digest.DigestUtils
 
-def map = [
+def awsCityRegionMap = [
         "Hong Kong" : "ap-east-1",
         "Mumbai" : "ap-south-1",
         "Paris" : "eu-west-3",
@@ -34,7 +34,7 @@ pipeline {
         stage('loop'){
             steps{
                 script {
-                    map.each { entry ->
+                    awsCityRegionMap.each { entry ->
                         stage (entry.key) {
                             region = processInputParams(awsCityRegionMap, region)
                             sh """
