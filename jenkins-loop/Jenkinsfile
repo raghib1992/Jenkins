@@ -56,7 +56,7 @@ pipeline {
     // }
     environment {
         choice name: 'CITY', choices: cityList, description: 'City for SaaS-global job'
-    // }
+    }
     stages {
         stage('loop'){
             steps{
