@@ -29,7 +29,7 @@ def map = [
 // def cityList = awsCityRegionMap.keySet().toList()
 // def region = null
 // def IS_NEW_BRANCH = true
-def terraformCmd = 'terraform'
+// def terraformCmd = 'terraform'
 
 // def processInputParams(awsCityRegionMap, region) {
 //     if (!awsCityRegionMap.containsKey(city)) {
@@ -61,6 +61,7 @@ pipeline {
                         stage (entry.key) {
                             sh """
                                 echo region = \\\"${entry.value}\\\" >> terraform.tfvars
+                                terraform init
                                 cat jenkins-loop/terraform.tfvars
                                 """
                         }
