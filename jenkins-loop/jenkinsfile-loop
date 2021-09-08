@@ -1,0 +1,28 @@
+def map = [
+    mumbai: 'ap-south-1'
+    oregon: 'us-west-2'
+]
+
+pipeline {
+    agent any
+    parameters {
+        region = "us-east-2"
+
+    }
+    environment {
+
+    }
+    stages {
+        stage('loop'){
+            steps{
+                script {
+                    stage (entry.key) {
+                        sh """
+                            echo region =\\\"${entry.value}\\\" >> terraform.tfvars
+                            """
+                    }
+                }
+            }
+        }
+    }
+}
