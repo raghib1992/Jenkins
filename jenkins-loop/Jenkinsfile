@@ -1,9 +1,9 @@
 // @Library('saas-shlib') _
 
-import groovy.json.JsonSlurper
-import org.apache.commons.codec.digest.DigestUtils
+// import groovy.json.JsonSlurper
+// import org.apache.commons.codec.digest.DigestUtils
 
-def awsCityRegionMap = [
+def map = [
         "N. Virginia" : "us-east-1",
         "Ohio" : "us-east-2",
         "N. California" : "us-west-1",
@@ -26,49 +26,41 @@ def awsCityRegionMap = [
         "Bahrain" : "me-south-1",
         "Sao Paulo" : "sa-east-1"
 ]
-def cityList = awsCityRegionMap.keySet().toList()
-def region = null
+// def cityList = awsCityRegionMap.keySet().toList()
+// def region = null
 // def IS_NEW_BRANCH = true
 def terraformCmd = 'terraform'
 
-def processInputParams(awsCityRegionMap, region) {
-    if (!awsCityRegionMap.containsKey(city)) {
-        currentBuild.result = 'ABORTED'
-        error('city parameter provided can\'t be matched with any AWS region available, double check that the city is available in AWS!')
-    }
-    else {
-        region = awsCityRegionMap[city]
-        echo "AWS region for deployment is ${region}"
-    }
-    echo 'Validation completed successfully!'
-    return region
-}
+// def processInputParams(awsCityRegionMap, region) {
+//     if (!awsCityRegionMap.containsKey(city)) {
+//         currentBuild.result = 'ABORTED'
+//         error('city parameter provided can\'t be matched with any AWS region available, double check that the city is available in AWS!')
+//     }
+//     else {
+//         region = awsCityRegionMap[city]
+//         echo "AWS region for deployment is ${region}"
+//     }
+//     echo 'Validation completed successfully!'
+//     return region
+// }
 
-def map = [
-    stageA: 'ap-south-1',
-    StageB: 'eu-west-3',
-    stageC: 'eu-north-1'
-]
+// def map = [
+//     stageA: 'ap-south-1',
+//     StageB: 'eu-west-3',
+//     stageC: 'eu-north-1'
+// ]
 
 pipeline {
     agent any
-    // parameters {
-    // }
-    environment {
-        choice name: 'CITY', choices: cityList, description: 'City for SaaS-global job'
-    }
+
     stages {
         stage('loop'){
             steps{
                 script {
-                    loop = processInputParams(awsCityRegionMap, region)
-                    loop.each { entry ->
+                    map.each { entry ->
                         stage (entry.key) {
                             sh """
-                                pwd;ls -l
                                 echo region = \\\"${entry.value}\\\" >> terraform.tfvars
-                                ${terraformCmd} -chdir=jenkins-loop init
-                                ${terraformCmd} -chdir=jenkins-loop plan -out tfplan -input=false
                                 cat jenkins-loop/terraform.tfvars
                                 """
                         }
