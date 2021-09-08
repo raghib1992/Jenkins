@@ -3,46 +3,46 @@
 import groovy.json.JsonSlurper
 import org.apache.commons.codec.digest.DigestUtils
 
-// def awsCityRegionMap = [
-//         "N. Virginia" : "us-east-1",
-//         "Ohio" : "us-east-2",
-//         "N. California" : "us-west-1",
-//         "Oregon" : "us-west-2",
-//         "Cape Town" : "af-south-1",
-//         "Hong Kong" : "ap-east-1",
-//         "Mumbai" : "ap-south-1",
-//         "Osaka" : "ap-northeast-3",
-//         "Seoul" : "ap-northeast-2",
-//         "Singapore" : "ap-southeast-1",
-//         "Sydney" : "ap-southeast-2",
-//         "Tokyo" : "ap-northeast-1",
-//         "Central" : "ca-central-1",
-//         "Frankfurt" : "eu-central-1",
-//         "Ireland" : "eu-west-1",
-//         "London" : "eu-west-2",
-//         "Milan" : "eu-south-1",
-//         "Paris" : "eu-west-3",
-//         "Stockholm" : "eu-north-1",
-//         "Bahrain" : "me-south-1",
-//         "Sao Paulo" : "sa-east-1"
-// ]
-// def cityList = awsCityRegionMap.keySet().toList()
-// def region = null
+def awsCityRegionMap = [
+        "N. Virginia" : "us-east-1",
+        "Ohio" : "us-east-2",
+        "N. California" : "us-west-1",
+        "Oregon" : "us-west-2",
+        "Cape Town" : "af-south-1",
+        "Hong Kong" : "ap-east-1",
+        "Mumbai" : "ap-south-1",
+        "Osaka" : "ap-northeast-3",
+        "Seoul" : "ap-northeast-2",
+        "Singapore" : "ap-southeast-1",
+        "Sydney" : "ap-southeast-2",
+        "Tokyo" : "ap-northeast-1",
+        "Central" : "ca-central-1",
+        "Frankfurt" : "eu-central-1",
+        "Ireland" : "eu-west-1",
+        "London" : "eu-west-2",
+        "Milan" : "eu-south-1",
+        "Paris" : "eu-west-3",
+        "Stockholm" : "eu-north-1",
+        "Bahrain" : "me-south-1",
+        "Sao Paulo" : "sa-east-1"
+]
+def cityList = awsCityRegionMap.keySet().toList()
+def region = null
 // def IS_NEW_BRANCH = true
 def terraformCmd = 'terraform'
 
-// def processInputParams(awsCityRegionMap, region) {
-//     if (!awsCityRegionMap.containsKey(city)) {
-//         currentBuild.result = 'ABORTED'
-//         error('city parameter provided can\'t be matched with any AWS region available, double check that the city is available in AWS!')
-//     }
-//     else {
-//         region = awsCityRegionMap[city]
-//         echo "AWS region for deployment is ${region}"
-//     }
-//     echo 'Validation completed successfully!'
-//     return region
-// }
+def processInputParams(awsCityRegionMap, region) {
+    if (!awsCityRegionMap.containsKey(city)) {
+        currentBuild.result = 'ABORTED'
+        error('city parameter provided can\'t be matched with any AWS region available, double check that the city is available in AWS!')
+    }
+    else {
+        region = awsCityRegionMap[city]
+        echo "AWS region for deployment is ${region}"
+    }
+    echo 'Validation completed successfully!'
+    return region
+}
 
 def map = [
     stageA: 'ap-south-1',
@@ -55,22 +55,20 @@ pipeline {
     // parameters {
     // }
     // environment {
-    //     choice name: 'CITY', choices: cityList, description: 'City for SaaS-global job'
+        choice name: 'CITY', choices: cityList, description: 'City for SaaS-global job'
     // }
     stages {
         stage('loop'){
             steps{
                 script {
-                    map.each { entry ->
+                    loop = processInputParams(awsCityRegionMap, region)
+                    loop.each { entry ->
                         stage (entry.key) {
-                            // region = processInputParams(awsCityRegionMap, region)
                             sh """
                                 pwd;ls -l
                                 echo region = \\\"${entry.value}\\\" >> terraform.tfvars
                                 ${terraformCmd} -chdir=jenkins-loop init
                                 ${terraformCmd} -chdir=jenkins-loop plan -out tfplan -input=false
-                                ${terraformCmd} -chdir=jenkins-loop show -no-color tfplan > tfplan.txt
-                                ${terraformCmd} -chdir=jenkins-loop apply -input=false tfplan
                                 cat jenkins-loop/terraform.tfvars
                                 """
                         }
