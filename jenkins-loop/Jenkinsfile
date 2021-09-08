@@ -1,4 +1,4 @@
-// @Library('saas-shlib') _
+@Library('saas-shlib') _
 
 import groovy.json.JsonSlurper
 import org.apache.commons.codec.digest.DigestUtils
@@ -54,7 +54,7 @@ pipeline {
     agent any
     // parameters {
     // }
-    // environment {
+    environment {
         choice name: 'CITY', choices: cityList, description: 'City for SaaS-global job'
     // }
     stages {
