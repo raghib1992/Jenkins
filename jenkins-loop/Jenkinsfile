@@ -67,10 +67,10 @@ pipeline {
                             sh """
                                 pwd;ls -l
                                 echo region = \\\"${entry.value}\\\" >> terraform.tfvars
-                                ${terraformCmd} init
-                                ${terraformCmd} plan -out tfplan -input=false
-                                ${terraformCmd} show -no-color tfplan > tfplan.txt
-                                ${terraformCmd} apply -input=false tfplan
+                                ${terraformCmd} -chdir=jenkins-loop init
+                                // ${terraformCmd} plan -out tfplan -input=false
+                                // ${terraformCmd} show -no-color tfplan > tfplan.txt
+                                // ${terraformCmd} apply -input=false tfplan
                                 cat jenkins-loop/terraform.tfvars
                                 """
                         }
