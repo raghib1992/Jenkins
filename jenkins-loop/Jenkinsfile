@@ -1,25 +1,41 @@
 def map = [
-    mumbai: 'ap-south-1'
-    oregon: 'us-west-2'
+    stageA: 'ap-south-1',
+    StageB: 'us-west-2'
 ]
 
 pipeline {
     agent any
-    parameters {
-        region = "us-east-2"
-
-    }
-    environment {
-
-    }
+    // parameters {
+    // }
+    // environment {
+    // }
     stages {
+        stage ('SCM') {
+            stage('checkout') {
+                steps {
+                    script{
+                        dir("terraform")
+                        {
+                            git (
+                                url: "https://github.com/raghib1992/Jenkins/jenkins-loop.git",
+                                credentialsId: 'my-github-token',
+                                branch: '*'
+                            )
+                        }
+                    }
+                }
+            }
+        }
         stage('loop'){
             steps{
                 script {
-                    stage (entry.key) {
-                        sh """
-                            echo region =\\\"${entry.value}\\\" >> terraform.tfvars
-                            """
+                    map.each { entry ->
+                        stage (entry.key) {
+                            sh """
+                                echo region = \\\"${entry.value}\\\" >> terraform.tfvars
+                                """
+                        }
+
                     }
                 }
             }
