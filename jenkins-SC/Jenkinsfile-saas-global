@@ -1,0 +1,110 @@
+@Library('saas-shlib') _
+
+import groovy.json.JsonSlurper
+import org.apache.commons.codec.digest.DigestUtils
+
+def awsCityRegionMap = [
+        "N. Virginia" : "us-east-1",
+        "Ohio" : "us-east-2",
+        "N. California" : "us-west-1",
+        "Oregon" : "us-west-2",
+        "Cape Town" : "af-south-1",
+        "Hong Kong" : "ap-east-1",
+        "Mumbai" : "ap-south-1",
+        "Osaka" : "ap-northeast-3",
+        "Seoul" : "ap-northeast-2",
+        "Singapore" : "ap-southeast-1",
+        "Sydney" : "ap-southeast-2",
+        "Tokyo" : "ap-northeast-1",
+        "Central" : "ca-central-1",
+        "Frankfurt" : "eu-central-1",
+        "Ireland" : "eu-west-1",
+        "London" : "eu-west-2",
+        "Milan" : "eu-south-1",
+        "Paris" : "eu-west-3",
+        "Stockholm" : "eu-north-1",
+        "Bahrain" : "me-south-1",
+        "Sao Paulo" : "sa-east-1"
+]
+def cityList = awsCityRegionMap.keySet().toList()
+def region = null
+// def IS_NEW_BRANCH = true
+def terraformCmd = 'terraform-13.6'
+
+def processInputParams(base_domain_alias, city, user_email, awsCityRegionMap, region) {
+    if (!awsCityRegionMap.containsKey(city)) {
+        currentBuild.result = 'ABORTED'
+        error('city parameter provided can\'t be matched with any AWS region available, double check that the city is available in AWS!')
+    }
+    else {
+        region = awsCityRegionMap[city]
+        echo "AWS region for deployment is ${region}"
+    }
+    echo 'Validation completed successfully!'
+    return region
+}
+
+// CODE_CHANGES = getGitChanges()
+
+pipeline {
+    environment {
+        AWS_REGION = 'us-east-2'
+        AWS_DEFAULT_REGION = 'us-east-2'
+    }
+    agent {
+        node {
+            label 'saas-deploy'
+        }
+    }
+    parameters {
+        choice name: 'CITY', choices: cityList, description: 'City for SaaS job'
+        booleanParam(name: 'run_script', defaultValue: true, description: 'when to push the code to to allow not to run script')
+    }
+
+    stages {
+        stage('Initial Step') {
+            when {
+                expressions {
+                    params.run_script == true
+                }
+            stages {
+                stage('initialize terraform') {
+                    steps {
+                        echo 'Running terraform init command'
+                        sh "${terraformCmd} init"
+                    }
+                }
+                stage('terraforma_plan') {
+                    steps {
+                        sh """
+                            ${terraformCmd} workspace show
+                            pwd;${terraformCmd} plan -out tfplan -input=false
+                            pwd;${terraformCmd} show -no-color tfplan > tfplan.txt
+                            """
+                    }
+                }
+
+                stage('Approval') {
+                    when {
+                        not {
+                            equals expected: true, actual: params.autoApprove
+                        }
+                    }
+                    steps {
+                        script {
+                                def plan = readFile 'tfplan.txt'
+                                input message: "Do you want to apply the plan?",
+                                parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
+                        }
+                    }
+                }
+                stage ('terraform_apply') {
+                    steps {
+                        echo 'running apply stage'
+                        sh "pwd;terraform apply -input=false tfplan"
+                    }
+                }
+            }
+        }
+    }
+}
