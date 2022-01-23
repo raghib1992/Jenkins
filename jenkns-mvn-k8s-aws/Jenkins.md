@@ -57,7 +57,7 @@ source .bash_profile
 ## Install maven plugins
 ### install plugin 'Maven Integration'
 ## Configure maven and java
-### configure into "Global Tool COnfiguration"
+### configure into "Global Tool Configuration"
 #### maven - name and path
 #### jdk - name and path
 *******************
