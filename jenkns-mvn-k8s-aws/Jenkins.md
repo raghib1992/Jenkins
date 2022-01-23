@@ -72,4 +72,10 @@ source .bash_profile
 ## Integrate docker with jenkins
 ### Create user in docker server eg dockeradmin
 ### Install plugins "Publish over SSH"
-## Add Dockerhost to jenkins configure system #to communicate form docker server to jenkins
+## Add Dockerhost to jenkins configure system
+#### to communicate form docker server to jenkins
+************************************************
+
+# Ansible
+## Integrate ansible with Jenkins
+### In jenkins docker configure system "connect ansible host through ssh"
