@@ -40,6 +40,7 @@ WORKDIR /opt/tomcat
 ADD https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.56/bin/apache-tomcat-9.0.56.tar.gz /opt/tomcat
 RUN tar -xzvf apache-tomcat-*.tar.gz
 RUN mv apache-tomcat-*/* /opt/tomcat
+COPY ./app.war /opt/tomcat/webapp/app.war
 EXPOSE 8080
 CMD ["/opt/tomcat/bin/catalina.sh", "run"]
 ```

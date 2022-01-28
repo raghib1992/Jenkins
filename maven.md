@@ -30,7 +30,7 @@ alternatives --config java
 ### edit .bash_profile
 ```
 M2_HOME=/opt/maven
-M2=/opy/maven/bin
+M2=/opt/maven/bin
 JAVA_HOME=/usr/lib/jvm/java-11-openjdk-11.0.13.0.8-1.amzn2.0.3.x86_64
 PATH=:$M2:$M2_HOME:$JAVA_HOME
 ```
@@ -38,9 +38,20 @@ PATH=:$M2:$M2_HOME:$JAVA_HOME
 ```
 source .bash_profile
 ```
+*********************************
+# On Jenkins side
+
 ## Install maven plugins
 ### install plugin 'Maven Integration'
+
 ## Configure maven and java
 ### configure into "Global Tool Configuration"
-#### maven - name and path
-#### jdk - name and path
+#### maven - name and path:/opt/maven
+#### jdk - name and path:/usr/lib/jvm/java-11-openjdk-11.0.13.0.8-1.amzn2.0.3.x86_64
+*********************************
+# maven goal
+## ref for maven lifecycle to set maven goal is:
+```
+https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html
+https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference
+```

@@ -64,3 +64,19 @@ www.localhost:8081/artifactory
 ```
 vi /opt/jfrog/artifactory/app/artifactory/tomcat/conf
 ```
+***********************************************
+# On Jenkins Side
+## Install plugin
+```
+Artifactory Plugins
+```
+## Configure System
+### Artifactory
+```
+add
+ServerID    server-hostname/ip
+url         http://server-hostname:8081/
+username    admin
+password    password
+```
+***********************************************

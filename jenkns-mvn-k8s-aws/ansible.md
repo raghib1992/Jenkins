@@ -34,7 +34,7 @@ docker build -t regapp:latest .
 ## push the image to docker hub repository
 ```
 docker login
-docker tags <tag> <dockerhub username>/regapp:latest
+docker tag <tag> <dockerhub username>/regapp:latest
 docker push <dockerhub username>/regapp:latest
 ```
 
