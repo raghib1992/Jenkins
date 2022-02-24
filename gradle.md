@@ -25,4 +25,22 @@ ls /opt/gradle/gradle-7.3.3
 export PATH=$PATH:/opt/gradle/gradle-7.3.3/bin
 ```
 *********************************
-# Gradle Script
+# Install Gradle on Window
+## Ref https://gradle.org/install/
+## Downaload binaries
+## Extract the bin zip file
+## set the GRADLE_HOME and path in user env and system env variable
+**********************************
+
+.gradle
+
+in window 
+C:\Users\raghi\.gradle
+store all the dependencies and jar file
+
+gradle plugins for eclipse IDE
+Help -> Eclipse Market Place -> Buildship Gralde Integration
+File -> other ->Gradle -> Gradle Project
+
+**********************************************
+

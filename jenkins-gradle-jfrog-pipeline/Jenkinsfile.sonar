@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    
+    tools {
+        gradle 'Gralde-7.4'
+    }
+    stages {
+        
+        stage ('Fetch Code') {
+            steps {
+               git branch: 'raghib', url: 'https://github.com/raghib1992/CICD_Java_gradle_application.git'
+            }
+        }
+        // downaload sonarscanner plugin
+        // configure sonar scanner
+        stage ('Sonar Quality test') {
+            steps {
+                withSonarQubeEnv('sonar-server') {
+                    sh '''gradle sonarqube -Dsonar.projectKey=sonar-gradle-job \
+                        -Dsonar.projectName=sonar-gradle-job \
+                        -Dsonar.projectVersion=1.0 \
+                        -Dsonar.sources=src/main/java/com/example/demo
+                        -Dsonar.jacoco.reportsPath=target/jacoco.exec \
+                        '''
+                }
+            }
+        }
+    }
+}

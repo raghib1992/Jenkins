@@ -1,0 +1,63 @@
+pipeline {
+
+    agent any
+    
+    tools {
+        gradle 'gradle-7-4'
+    }
+
+    stages {
+        stage ('Fetch Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/raghib1992/CICD_Java_gradle_application.git'
+            }
+        }
+
+        stage ('Build') {
+            steps {
+                sh 'gradle build'
+            }
+            post {
+                success {
+                    echo "Archieving the Artifacts"
+                    archiveArtifacts artifacts: '**/*.war'
+                }
+            }
+        }
+        
+        stage ('Test') {
+            steps {
+                sh 'gradle test'
+            }            
+        }
+    
+        // stage ('Publish to S3 bucket') {
+        //     steps {
+        //         sh 'aws s3 cp ./build/lib/*.war s3://raghib-jenkins-artifact'
+        //     }
+        // }
+       
+        
+        stage('Upload Artifacts to AWS') {
+            steps {
+                s3Upload(file:'sampleWeb-0.0.1-SNAPSHOT.war', workingDir:'build/libs', bucket:'raghib-jenkins-artifact')
+            }
+        }
+
+
+        // stage("Upload"){
+        //     steps{
+        //         withAWS(region:"${region}", credentials:"${aws_credential}){
+        //             s3Upload(file:"${TAG_NAME}", bucket:"${bucket}", path:"${TAG_NAME}/")
+
+        //               s3Upload(includePathPattern:'*SNAPSHOT.war', workingDir:'build/libs', bucket:'raghib-jenkins-artifact')
+        //         }    
+        //     }
+        //     post {
+        //         success{
+        //             echo "Artifact successfully upload to S3"
+        //         }
+        //     }
+        // }
+    }
+}

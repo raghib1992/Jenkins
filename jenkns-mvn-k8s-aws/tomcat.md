@@ -1,10 +1,12 @@
 # Tomcat
 ## download tar.gz file
-### link https://downloads.apache.org/tomcat/tomcat-9/v9.0.56/bin/apache-tomcat-9.0.56.tar.gz.asc
+### link 
+##### https://downloads.apache.org/tomcat/tomcat-9/v9.0.56/bin/apache-tomcat-9.0.56.tar.gz.asc
+#### https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.9/bin/apache-tomcat-8.5.9.tar.gz
 ## Install in tomcat server
 ```
 cd /opt
-wger https://downloads.apache.org/tomcat/tomcat-9/v9.0.56/bin/apache-tomcat-9.0.56.tar.gz.asc
+wget https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.9/bin/apache-tomcat-8.5.9.tar.gz
 tar -xzvf apache-tomcat-9.0.56.tar.gz
 mv apache-tomcat-9.0.56.tar.gz tomcat
 cd /tomcat/bin

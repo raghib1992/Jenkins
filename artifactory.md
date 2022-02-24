@@ -1,6 +1,58 @@
 # Jfrog
+
+Ref to Download 
+zip
+https://releases.jfrog.io/artifactory/bintray-artifactory/org/artifactory/oss/jfrog-artifactory-oss/
+tar
+https://jfrog.com/community/download-artifactory-oss/
+
+Ref to Install
+https://www.jfrog.com/confluence/display/JFROG/Installing+Artifactory
+
 ## Install Artifactiory on different server than jenkins
-## Check linux Os and its version
+## Pre-requisites:
+### 1. An AWS T2.small EC2 instance (Linux)
+### 2. Open port 8081 and 8082 in the security group
+### Login to instance as a root user and install Java
+```
+yum install java-1.8* -y 
+```
+### Download Artifactory packages onto /opt/
+#### For Latest version of Artifactory OSS
+
+Ref https://www.jfrog.com/confluence/display/RTF6X/Installing+on+Linux+Solaris+or+Mac+OS
+```
+cd /opt 
+wget https://jfrog.bintray.com/artifactory/jfrog-artifactory-oss-6.9.6.zip
+```
+### extract artifactory tar.gz file
+```
+unzip jfrog-artifactory-oss-6.9.6.zip
+```
+## Go inside to bin directory and start the services
+```
+cd /opt/jfrog-artifactory-oss-6.9.6/bin
+./artifactory.sh start
+```
+## access artifactory from browser
+```
+http://<PUBLIC_IP_Address>:8081 
+```
+## Provide credentials
+```
+username: admin
+password: passwrod 
+```
+### Create user for Jenkins
+Security -> users
+************************************************************
+# Install Artifactory on Docker
+## ref https://jfrog.com/community/download-artifactory-oss/
+```
+docker pull releases-docker.jfrog.io/jfrog/artifactory-oss:latest
+docker run -d -p 8081:8081 release-docker.jfrog.io/jfrog/artifoctory-oss:latest
+```
+## Check linux OS and its version
 ```
 cat /proc/version
 ```

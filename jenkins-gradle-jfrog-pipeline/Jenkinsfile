@@ -1,0 +1,72 @@
+pipeline {
+
+    agent {
+        node {
+            label 'slave'
+        }
+    }
+
+    tools {
+        gradle 'gradle-7-4'
+    }
+
+    stages {
+
+        stage ('Fetch Code') {
+            steps {
+                git branch: 'main', credentialsId: 'github-new', url: 'https://github.com/raghib1992/CICD_Java_gradle_application.git'
+            }
+        }
+
+        stage ('Build') {
+            steps {
+                sh 'gradle build'
+            }
+        }
+
+        stage ('Test') {
+            steps {
+                sh 'gradle test'
+            }
+        }
+
+        stage ('Deploy Articacts to Artifactory') {
+            steps {
+                rtUpload (
+                    buildName: JOB_NAME,
+                    buildNumber: BUILD_NUMBER,
+                    serverId: 'Artifactory-Server',
+                    spec: '''{
+                            "files":[
+                                {
+                                    "pattern": "build/libs/*.war",
+                                    "target": "sample-gradle-snapshot",
+                                    "recursive": "false"
+                                }
+                            ]
+                        }'''
+                    )
+            }
+        }
+        stage ('Publish Build Infor to ') {
+            steps {
+                rtPublishBuildInfo (
+                    buildName: JOB_NAME,
+                    buildNumber: BUILD_NUMBER,
+                    serverId: 'Artifactory-Server'
+                )
+            }
+        }  
+    }
+
+    post {
+        always {
+            slackSend channel : '#gradle-test',
+                      color: 'good',
+                      message: "Successfully run the build"
+        }
+    }
+}
+
+slackSend channel: '#gradle-test'
+slackUserIdsFromCommitters tokenCredentialId: 'slack-token'
