@@ -1,72 +1,85 @@
-pipeline {
+// import hudson.model.*
+// import java.lang.*
+// import groovy.lang.Closure
+// import java.util.Map
 
+pipeline {
     agent {
         node {
-            label 'slave'
+            label 'Window'
         }
     }
-
+    parameters {
+        (string (defaultValue: 'dev', name: 'environment'))
+    }    
     tools {
-        gradle 'gradle-7-4'
+        gradle 'gradle-window'
     }
-
     stages {
-
-        stage ('Fetch Code') {
+        stage ('powershell') {
             steps {
-                git branch: 'main', credentialsId: 'github-new', url: 'https://github.com/raghib1992/CICD_Java_gradle_application.git'
+                script {
+                    powershell 'Write-Output "Hello, World!"'
+                }
             }
         }
-
+        stage ('Git') {
+            when {
+                expression { params.environment == "dev" }
+            }
+            steps {
+                
+                // checkout([$class: 'GitSCM', branches: [[name: '*/raghib']], userRemoteConfigs: [[url: 'https://github.com/raghib1992/CICD_Java_gradle_application.git']]])
+                git branch: 'raghib', url: 'https://github.com/raghib1992/CICD_Java_gradle_application.git'
+            }
+        }
+        
         stage ('Build') {
             steps {
-                sh 'gradle build'
+                bat 'gradle -version'
+                bat 'gradle build'
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: '**/*.war'
+                }
             }
         }
-
-        stage ('Test') {
+        
+        // stage ('Publish Artifacts') {
+        //     steps {
+        //         rtUpload (
+        //             buildName: JOB_NAME,
+        //             buildNumber: BUILD_NUMBER,
+        //             serverId: 'Artifactory',
+        //             spec: '''{
+        //                     "files":[
+        //                         {
+        //                             "pattern": "build/libs/*.war",
+        //                             "target": "raghib-local-repo/",
+        //                             "recursive": "false"
+        //                         }
+        //                     ]
+        //             }'''
+        //         )
+        //     }
+        // }
+        stage ('Deploy to Artifactory') {
             steps {
-                sh 'gradle test'
+                script {
+                    def server = Artifactory.newServer url: 'http://3.110.227.79:8081/artifactory/', credentialsId: 'artifactory'
+                    
+                    def uploadSpec = """{
+                        "files": [
+                            {
+                                "pattern": "**/*.war",
+                                "target": "nadim-local/"
+                            }
+                        ]
+                    }"""
+                    server.upload spec:uploadSpec
+                }
             }
-        }
-
-        stage ('Deploy Articacts to Artifactory') {
-            steps {
-                rtUpload (
-                    buildName: JOB_NAME,
-                    buildNumber: BUILD_NUMBER,
-                    serverId: 'Artifactory-Server',
-                    spec: '''{
-                            "files":[
-                                {
-                                    "pattern": "build/libs/*.war",
-                                    "target": "sample-gradle-snapshot",
-                                    "recursive": "false"
-                                }
-                            ]
-                        }'''
-                    )
-            }
-        }
-        stage ('Publish Build Infor to ') {
-            steps {
-                rtPublishBuildInfo (
-                    buildName: JOB_NAME,
-                    buildNumber: BUILD_NUMBER,
-                    serverId: 'Artifactory-Server'
-                )
-            }
-        }  
-    }
-
-    post {
-        always {
-            slackSend channel : '#gradle-test',
-                      color: 'good',
-                      message: "Successfully run the build"
         }
     }
 }
-
-slackSend channel: '#gradle-test'
-slackUserIdsFromCommitters tokenCredentialId: 'slack-token'

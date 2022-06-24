@@ -131,4 +131,7 @@ url         http://server-hostname:8081/
 username    admin
 password    password
 ```
+
+### Ref for pipeline syntax
+https://www.jfrog.com/confluence/display/JFROG/Jenkins+Artifactory+Plug-in 
 ***********************************************
