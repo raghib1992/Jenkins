@@ -1,16 +1,119 @@
+script.groovy
+---------------------------------------------------
+def buildApp() {
+    echo 'building the application..'
+}
+
+def testApp() {
+    echo 'testing the application..'
+}
+
+def deployApp() {
+    echo 'edploying the application..'
+    echo "deploying version ${params.VERSION}"
+}
+
+return this
+----------------------------------------------------------
+Jenkinsfile
+----------------------------------------------------------
+CODE_CHANGES = getGitChanges()  //groovy code to check wheater a code changes had been made
+// to find the environmental variable "http://localhost:8080/env-vars.html"
+def gv
 pipeline {
+    
     agent any
+
+    tools {
+        maven  'Maven'
+        gradle 'gradle'
+        jdk 'JAVA-1.8'
+
+    }
+    
+    parameters {
+        string(name: 'VERSION', defaultValue: '', description: 'version to define the application version')
+        choice(name: 'VERSION', choices:['1.1.0','1.2.0','1.3.0'], description: '')
+        booleanParam(name: 'executeTests', defaultValue: true, description: '')
+    }
+
+    environment {
+        NEW_VERSION = '1.3.0'
+        SERVER_CREDENTIALS = credentials('<credential id>')   //plugins <credentials> <credential binding> plugins
+    }
+
     stages{
+        stage('init') {
+            script {
+                    gv = load "script.groovy"       //script.groovy is a groovy script                    
+                }
+        }
         stage('Build') {
-            steps {
-                sh 'mvn clean package'
-            }
-            post {
-                success {
-                    echo "archiving..."
-                    archiveArtifacts artifacts: '**/target/*.war'
+            when {
+                expression {
+                    env.BRANCH_NAME == 'dev' && CODE_CHANGES == true
                 }
             }
+            steps {
+                script {
+                    gv.buildApp()
+                }
+                sh 'mvn clean package'
+                echo " this is building application"
+                echo "buiding version ${NEW_VERSION}"
+                echo 'buiding version ${NEW_VERSION}'
+            }
+            // post {
+            //     success {
+            //         echo "archiving..."
+            //         archiveArtifacts artifacts: '**/target/*.war'
+            //     }
+            // }
+        }
+
+        stage ('Test') {
+            when {
+                expression {
+                    env.BRANCH_NAME == 'dev' || BRANCH_NAME == 'master'
+                }
+            }
+            steps{
+                script {
+                    gv.testApp()
+                }
+                echo "testing the appication"
+                withCredentials([
+                    usernamePassword(credentials: 'server-credentials', usernameVariable: USER, passwordVariable: PWD)
+                ]) {
+                    sh "some scrpit ${USER} ${PWD}"
+                }
+            }
+        }
+
+        stage ('Deploy') {
+            when {
+                expression {
+                    params.executeTests
+                }
+            }
+            steps {
+                script {
+                    gv.deployApp()
+                }
+                echo "Deploying the application ${VERSION}"
+                echo "Deploying with credentials ${SERVER_CREDENTIALS}"
+            }
+        }
+    }
+    post {
+        always {
+            //
+        }
+        success {
+            //
+        }
+        failure {
+            //
         }
     }
 }

@@ -23,7 +23,7 @@ find / -name context.xml
 /opt/tomcat/webapps/host-manager/META-INF/context.xml
 /opt/tomcat/webapps/manager/META-INF/context.xml
 ```
-#### comment out restriction to open only from inside serfver
+#### comment out restriction to open only from inside server
 ## to set password on manager-app
 ### edit /tomcat/conf/tomcat-user.xml
 ```

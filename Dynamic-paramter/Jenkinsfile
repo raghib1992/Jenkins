@@ -1,0 +1,28 @@
+pipeline {
+    
+    agent any
+
+    // environment {
+    //     var1 = 'test_password'
+    // }
+    
+
+    stages {
+        stage ('My Environment Pipeline') {
+            environment {
+                token = credentials('select')
+            }
+            steps {
+                sh "echo 'This is my first environment $select'"
+            }
+        }
+        stage ('Second Environment Pipeline') {
+            environment {
+                My_Username = credentials('raghib')
+            }
+            steps {
+                sh "echo 'This is my second environment $My_Username'"
+            }
+        }
+    }
+}

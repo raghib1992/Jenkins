@@ -105,4 +105,101 @@ C:\MyWorkspace>
 ```
 
 *********************************
+# Command
+```
+gradle clean build --info
+```
+****************************
+# Gradle and Nexus Integration
 
+
+#### Gradle 6 for nexus support http and https
+#### Gradle 7 for nexus support https
+
+### vi build.gradle
+```
+sonarqube {
+    properties {
+        property "sonar.sourceEncoding", "UTF-8"
+                property "sonar.projectName", "springboot-tomcat-gradle-war"
+                property "sonar.host.url", "http://13.235.83.230:9000"
+                property "sonar.login", "squ_88e2bec6a384f126b4d4bba53e303bdeac671e1e"
+    }
+}
+```
+
+## TO Create Artifacts 
+## gralde command 
+```
+gradle clean build
+```
+
+## To push artifacts to nexus
+### Plugin
+#### Ref https://medium.com/@simionrazvan/how-to-create-a-gradle-library-and-publish-it-on-nexus-34be19b520aa
+```
+apply plugin: ‘maven-publish’
+```
+```
+publishing {
+  publications {
+    maven(MavenPublication) {
+	// bootJar is the default build task configured by spring boot
+	artifact bootJar
+    }
+  }
+  repositories {
+    maven {
+      if(project.version.endsWith('-SNAPSHOT')) {
+        url 'http://65.0.74.168:8081/repository/maven-snapshots/'
+      } else {
+        url 'http://65.0.74.168:8081/repository/maven-releases/'
+      }
+      credentials {
+        username "admin"
+        password "nexus123"
+      }
+    }
+  }
+}
+```
+
+*********************
+# Add Nexus credential in gradle.properties
+## add build.gradle
+```
+publishing {
+  publications {
+    maven(MavenPublication) {
+	// bootJar is the default build task configured by spring boot
+	artifact bootJar
+    }
+  }
+  repositories {
+    maven {
+      if(project.version.endsWith('-SNAPSHOT')) {
+        url 'http://65.0.74.168:8081/repository/maven-snapshots/'
+      } else {
+        url 'http://65.0.74.168:8081/repository/maven-releases/'
+      }
+      credentials {
+        username project.repoUser
+        password project.repoPassword
+      }
+    }
+  }
+}
+```
+
+### vi gradle.properties
+```
+repoUser=admin
+repoPassword=nexus123
+```
+
+**************
+# Download the artifacts from maven
+
+```
+wget --user <sonar username> --password <sonar password> <nexus repo url>/<artifacts path>
+```

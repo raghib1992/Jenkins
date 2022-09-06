@@ -86,3 +86,54 @@ configure system
 
 ## install ansible plugins
 ## install ansicolor
+********************
+
+# FOr multibranch project
+## Branch Filter- allow only dev and master and feature branch but not to bug fixing branch
+### Filter by name (with regular expression)
+```
+^dev|master|feature.*$
+```
+
+*******************************************
+
+Install plugins "maven integration"
+********************************************
+
+Jenkins push file docker image to ECR
+
+plugin CLoudBees aws credentials
+plugin amazon ecr
+plugin docker pipeline
+
+********************************************
+
+Email notification from jenkins to ses
+
+AWS 
+create email 
+SMTP crdential
+
+Jenkins
+ses endpoint
+username
+passord
+use ssl and tls
+port 465
+UTF-8
+*************************************
+install on
+
+
+*************************************
+
+# Security
+
+
+### vi /var/lib/jenkins/config.xml
+```
+  <useSecurity>true</useSecurity>
+  <authorizationStrategy class="hudson.security.FullControlOnceLoggedInAuthorizationStrategy">
+    <denyAnonymousReadAccess>true</denyAnonymousReadAccess>
+  </authorizationStrategy>
+```

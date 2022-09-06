@@ -12,6 +12,11 @@ add it on visudo file
 ```
 edit /etc/ssf/sshd_config
 PasswordAuthentication yes
+
+```
+## restrt the ssh demon
+```
+sudo systemctl restart sshd
 ```
 ## Install docker
 ```
@@ -37,4 +42,7 @@ docker login
 docker tag <tag> <dockerhub username>/regapp:latest
 docker push <dockerhub username>/regapp:latest
 ```
-
+*********************
+# Jenkins
+if you connect other server using ssh
+install plugin publishOverSSH

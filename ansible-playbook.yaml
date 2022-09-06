@@ -1,0 +1,35 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: stop previous verison docker
+      shell: docker stop webapp
+    - name: removed stop container
+      shell: docker rm -f webapp
+    - name: remove docker images
+      shell: docker image rm -f raghib1992/devops_project:latest
+    - name: create docker container
+      shell: docker run -itd --name webapp -p 8090:8090 raghib1992/devops_project:latest
+
+
+---------------------------------------------------
+cd /opt/docker
+docker build -t $JOB_NAME:v1.$BUILD_ID .
+docker tag $JOB_NAME:v1.$BUILD_ID raghib1992/$JOB_NAME:v1.$BUILD_ID
+docker tag $JOB_NAME:v1.$BUILD_ID raghib1992/$JOB_NAME:latest
+docker push raghib1992/$JOB_NAME:v1.$BUILD_ID
+docker push raghib1992/$JOB_NAME:latest
+docker rmi $JOB_NAME:v1.$BUILD_ID raghib1992/$JOB_NAME:v1.$BUILD_ID raghib1992/$JOB_NAME:latest
+-------------------------------------------------------------
+
+FROM centos:latest
+MAINTAINER raghib.npti@gmail.com
+RUN yum install -y httpd \
+  zip unzip
+ADD https://www.free-css.com/assets/files/free-css-template/download/pages258/loxury.zip /var/www/html
+WORKDIR /var/www/html
+RUN unzip loxury.zip
+RUN cp -rvf loxury/* .
+RUN -rf loxury loxury.zip
+CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+EXPOSE 80
