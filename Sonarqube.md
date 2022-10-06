@@ -1,9 +1,16 @@
-
 # Setup Sonarqube server
-
+## Ref
+```
+https://devopscube.com/setup-and-configure-sonarqube-on-linux/
+https://docs.sonarqube.org/latest/requirements/requirements/
+```
 ## pre-requisites
 
-### install java-11
+- Server with minimum 2GB/1 vcpu capacity
+- PostgreSQL version 9.3 or greater.
+- OpenJDK 11 or JRE 11
+- All sonarquber process should run as a non-root sonar user
+- Server firewall opened for, sonar will run on 9000
 
 ### ubuntu
 ```
@@ -11,13 +18,221 @@ apt install openjdk-11-jre-headless -y
 apt install openjdk-11-jdk-headless -y
 ```
 
-### Downlaod sonarqube
-#### Ref:
+## Downlaod sonarqube
+### Ref:
 ```
 https://www.sonarqube.org/downloads/
 https://www.sonarqube.org/success-download-community-edition/
 https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.5.0.56709.zip
 ``` 
+
+## Step to install and setup SOnarqube on RHEL/Amazon-Linux/Centos
+1. Update the server.
+```
+sudo yum update -y
+```
+2. Install wget & unzip
+```
+sudo yum install wget unzip -y
+```
+3. Install java 11
+```
+sudo yum install java-11-openjdk-devel -y
+```
+4. Login as root and execute the following commands.
+```
+sysctl vm.max_map_count
+sysctl fs.file-max
+ulimit -n
+ulimit -u
+```
+### Setup PostgreSQL 10 Database For SonarQube
+### or Ref https://www.how2shout.com/linux/install-postgresql-13-on-aws-ec2-amazon-linux-2/
+1. Install PostgreSQL 10 repo.
+```
+sudo yum install https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-centos10-10-2.noarch.rpm -y
+```
+2. Install PostgreSQL 10
+```
+sudo yum install postgresql10-server postgresql10-contrib -y
+```
+3. Initialize the database.
+```
+sudo /usr/pgsql-10/bin/postgresql-10-setup initdb
+```
+4. Open /var/lib/pgsql/data/pg_hba.conf file to change the authentication to md5.
+```
+sudo vi /var/lib/pgsql/10/data/pg_hba.conf
+```
+5. Find the following lines at the bottom of the file and change 'peer' to 'trust' and 'idnet' to 'md5'
+```
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+
+# "local" is for Unix domain socket connections only
+local   all             all                                     peer
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            ident
+# IPv6 local connections:
+host    all             all             ::1/128                 ident
+```
+6. Start and enable PostgreSQL.
+```
+sudo systemctl start postgresql-10
+sudo systemctl enable postgresql-10
+```
+7. You can verify the installation using the following version select query.
+```
+sudo -u postgres /usr/pgsql-10/bin/psql -c "SELECT version();"
+```
+## Setup Sonar User and Database
+1. Change the default password of the Postgres user. All Postgres commands have to be executed from this user.
+```
+sudo passwd postgres
+```
+2. Login as postgres user with the new password.
+```
+su - postgres
+```
+3. Login to the PostgreSQL CLI.
+```
+psql
+```
+4. Create a sonarqubedb database.
+```
+create database sonarqubedb;
+```
+5. Create the sonarqube DB user with a strongly encrypted password. Replace your-strong-password with a strong password.
+```
+create user sonarqube with encrypted password 'your-strong-password';
+```
+6. Next, grant all privileges to sonrqube user on sonarqubedb.
+```
+grant all privileges on database sonarqubedb to sonarqube
+```
+7. Exit the psql prompt using the following command.
+```
+\q
+```
+8. Switch to your sudo user using the exit command.
+```
+exit
+```
+## Setup Sonarqube Web Server
+1. Download the latest sonarqube installation file to /opt folder. You can get the latest download link from here. http://www.sonarqube.org/downloads/
+```
+cd /opt 
+sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.6.1.59531.zip
+```
+2. Unzip sonarqube source files and rename the folder.
+```
+sudo unzip sonarqube-7.6.zip
+sudo mv sonarqube-7.6 sonarqube
+```
+3. Open /opt/sonarqube/conf/sonar.properties file.
+#### Uncomment and edit the parameters as shown below. Change the password accordingly. You will find jdbc parameter under PostgreSQL section
+```
+sudo vi /opt/sonarqube/conf/sonar.properties
+
+sonar.jdbc.username=sonar                                                                                                
+sonar.jdbc.password=sonar-db-password
+sonar.jdbc.url=jdbc:postgresql://localhost/sonar
+```
+4. By default, sonar will run on 9000. If you want on port 80 or any other port, change the following parameters for accessing the web console on that specific port.
+```
+sonar.web.host=0.0.0.0
+sonar.web.port=80
+```
+If you want to access sonarqube some path like http://url:/sonar, change the following parameter.
+```
+sonar.web.context=/sonar
+```
+## Add Sonar User and Privileges
+1. Create a user named sonar and make it the owner of the /opt/sonarqube directory
+```
+sudo useradd sonar
+sudo chown -R sonar:sonar /opt/sonarqube
+```
+## Start Sonarqube Service
+1. Login as sonar user
+```
+sudo su - sonar
+```
+2. Navigate to the start script directory.
+```
+cd /opt/sonarqube/bin/linux-x86-64
+```
+### Note: Donot start sonarqube with root user as its internally use elastic search
+edit file sonarqube-9.5.0.56709/bin/linux-x86-64/sonar.sh
+```
+vi sonarqube-9.5.0.56709/bin/linux-x86-64/sonar.sh
+RUN_AS_USER=ubuntu
+```
+3. Start the sonarqube service.
+```
+./sonar.sh start
+```
+##### Note Now, you should be able to access sonarqube on the browser on port 9000
+
+4. Check the application status. If it is in running state, you can access the sonarqube dashboard using the DNS name or Ip address of your server.
+```
+sudo ./sonar.sh status
+```
+
+## Setting up Sonarqube as a service
+1. Create a file /etc/systemd/system/sonarqube.service
+```
+sudo vi /etc/systemd/system/sonarqube.service
+```
+2. Copy the following content on to the file.
+```
+[Unit]
+Description=SonarQube service
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=sonarqube
+Group=sonarqube
+PermissionsStartOnly=true
+ExecStart=/bin/nohup java -Xms32m -Xmx32m -Djava.net.preferIPv4Stack=true -jar /opt/sonarqube/lib/sonar-application-7.6.jar
+StandardOutput=syslog
+LimitNOFILE=65536
+LimitNPROC=8192
+TimeoutStartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+3. Start and enable sonarqube
+```
+sudo systemctl start sonarqube
+sudo systemctl enable sonarqube
+```
+4. Check the sonarqube status to ensure it is running as expected.
+```
+sudo systemctl status  sonarqube
+```
+*******************
+
+# Troubleshooting Sonarqube
+### Ref: https://www.sonarqube.org/community/
+### All the logs of sonarqube are present in the /opt/sonarqube/logs directory.
+```
+cd /opt/sonarqube/logs
+```
+### You can find the following log files.
+```
+es.log
+sonar.log
+web.log
+access.log
+```
+### Using tail command you can check the latest logs. For example,
+```
+tail -f access.log
+```
+****************************************************************************
 
 ### export bin to path
 ```
@@ -28,7 +243,6 @@ edit file sonarqube-9.5.0.56709/bin/linux-x86-64/sonar.sh
 ```
 vi sonarqube-9.5.0.56709/bin/linux-x86-64/sonar.sh
 RUN_AS_USER=ubuntu
-```
 
 ### Start sonar
 ```
