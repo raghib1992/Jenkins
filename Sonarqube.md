@@ -12,12 +12,6 @@ https://docs.sonarqube.org/latest/requirements/requirements/
 - All sonarquber process should run as a non-root sonar user
 - Server firewall opened for, sonar will run on 9000
 
-### ubuntu
-```
-apt install openjdk-11-jre-headless -y
-apt install openjdk-11-jdk-headless -y
-```
-
 ## Downlaod sonarqube
 ### Ref:
 ```
@@ -26,7 +20,37 @@ https://www.sonarqube.org/success-download-community-edition/
 https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.5.0.56709.zip
 ``` 
 
-## Step to install and setup SOnarqube on RHEL/Amazon-Linux/Centos
+### Install Java 11 in amazon linux
+```
+amazon-linux-extras install java-openjdk11 -y
+```
+
+### Install Java 11 in ubuntu
+```
+apt install openjdk-11-jre-headless -y
+apt install openjdk-11-jdk-headless -y
+```
+
+### unzip the file give access to non root user (recursive)
+### Note: Donot start sonarqube with root user as its internally use elastic search
+edit file sonarqube-9.5.0.56709/bin/linux-x86-64/sonar.sh
+```
+vi sonarqube-9.5.0.56709/bin/linux-x86-64/sonar.sh
+RUN_AS_USER=ubuntu
+```
+
+### Start sonarqube
+```
+./sonar.sh start
+```
+
+### Default username and Password
+```
+admin
+admin
+```
+
+## Step to install and setup Sonarqube on RHEL/Amazon-Linux/Centos
 1. Update the server.
 ```
 sudo yum update -y
@@ -161,11 +185,7 @@ sudo su - sonar
 ```
 cd /opt/sonarqube/bin/linux-x86-64
 ```
-### Note: Donot start sonarqube with root user as its internally use elastic search
-edit file sonarqube-9.5.0.56709/bin/linux-x86-64/sonar.sh
-```
-vi sonarqube-9.5.0.56709/bin/linux-x86-64/sonar.sh
-RUN_AS_USER=ubuntu
+USER=ubuntu
 ```
 3. Start the sonarqube service.
 ```
@@ -184,7 +204,7 @@ sudo ./sonar.sh status
 sudo vi /etc/systemd/system/sonarqube.service
 ```
 2. Copy the following content on to the file.
-```
+```         
 [Unit]
 Description=SonarQube service
 After=syslog.target network.target
@@ -475,10 +495,10 @@ Create Webhook for quality gate report
 
 
 **************************************
-Sonarqube and jenkins
+# Sonarqube and jenkins
 
 install plugin sonarqube scanner plugins
-add sonar toekn as secret text in jenkins credential
+add sonar token as secret text in jenkins credential
 configure tool add sonarqube server
 Create webhook to revert the status of qua;ity check to jenkins
 
