@@ -53,5 +53,5 @@ pipeline {
 
 
 # aws configure cloud
-1. install plugins Amazon EC2
-2. COnfigure cloud
+1. Install plugins Amazon EC2
+2. Configure Cloud
