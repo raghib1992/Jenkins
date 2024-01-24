@@ -4,14 +4,14 @@
 4. Connect Maven to JFrog
 5. Check how the versioning works on JFrog
 
-### Create repo
+6. Create repo
 - Local
 - Remote
 - Virtual
+7. Create User
+- user and password with privlage
 
-### Create User: user and password with privlage
-
-### Add Distribution elements (which contain add of repo to deploy) to pom.xml
+8. Add Distribution elements (which contain add of repo to deploy) to pom.xml
 ```
 distributionManagement>
     <repository>
@@ -26,8 +26,7 @@ distributionManagement>
     </snapshotRepository>
 </distributionManagement>
 ```
-
-### Modify setting.xml and add server elements of accessing a repo
+9. Modify setting.xml and add server elements of accessing a repo
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.1.0"
@@ -86,20 +85,19 @@ distributionManagement>
   </activeProfiles>
 </settings>
 ```
-
-### deploy
+10. deploy
 ```
 mvn deploy
 ```
 
-### Create Group repo which contain all the repo from where you download the package
-### Get group repo url
+11. Create Group repo which contain all the repo from where you download the package
+- Get group repo url
+- Locate the package required for dowanload
+- Add Dependencies
+- delete from local maven repwo
 
-### Locate the package required for download
-### Add Dependencies
-### delete from local maven repo
-### Modify setting.xml with add mirror elements with Group Repo
-### id must be match with server elemets
+12. Modify setting.xml with add mirror elements with Group Repo
+- id must be match with server elemets
 ```
 <mirrors>
     <mirror>
