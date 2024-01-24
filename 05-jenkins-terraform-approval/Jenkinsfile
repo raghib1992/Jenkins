@@ -33,7 +33,7 @@ pipeline {
                             ${terraformCmd} workspace show
                             pwd;${terraformCmd} plan -out tfplan
                             pwd;${terraformCmd} show -no-color tfplan > tfplan.txt
-                            """
+                        """
                     }
                 }
 

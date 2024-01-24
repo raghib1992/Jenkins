@@ -59,7 +59,7 @@
  - sudo yum remove java-1.7.0-openjdk
  - to Verify: java -version 
    
-   refere link for more details https://serverfault.com/questions/664643/how-can-i-upgrade-to-java-1-8-on-an-amazon-linux-server 
+ - Ref link for more details: *https://serverfault.com/questions/664643/how-can-i-upgrade-to-java-1-8-on-an-amazon-linux-server*
    
  ## Installation of Docker in centos
  
@@ -79,26 +79,30 @@
 - service docker start 
 - service docker status 
 
+### TroubleShooting
+### If you face below problem which is same as mentione below the you can refer this link
+- *https://stackoverflow.com/questions/25183063/docker-on-rhel-6-cgroup-mounting-failing*
 
-      If you face below problem which is same as mentione below the you can refer this link
+- Starting cgconfig service: Error: cannot create directory /cgroup/blkio
+/sbin/cgconfigparser; error loading /etc/cgconfig.conf: Cgroup, operation not allowed
+Failed to parse /etc/cgconfig.conf                         [FAILED]
 
-      https://stackoverflow.com/questions/25183063/docker-on-rhel-6-cgroup-mounting-failing
+After doing this you need run all the commands with sudo concatenated to it.
 
-      Starting cgconfig service: Error: cannot create directory /cgroup/blkio
-      /sbin/cgconfigparser; error loading /etc/cgconfig.conf: Cgroup, operation not allowed
-      Failed to parse /etc/cgconfig.conf                         [FAILED]
-
-       After doing this you need run all the commands with sudo concatenated to it.
-
-      - To solve this issue we need to add current user to docker group , to do the same follow the below commands 
-        sudo groupadd docker
-        sudo usermod -aG docker $USER ( got a error while runing docker commands with the current user)
-        sudo usermod -aG docker jenkins (got a error while runing docker commands with jenkins user )
-        getent group <groupname> (to check the list of users in particular group)
-        sudo passwd jenkins to change password of jenkins user
-        
-      - even after following the above commands if you face any issue in ruuning commands then run below command
-        chmod 777 /var/run/docker.sock
+- To solve this issue we need to add current user to docker group , to do the same follow the below commands
+```
+sudo groupadd docker
+sudo usermod -aG docker $USER ( got a error while runing docker commands with the current user)
+sudo usermod -aG docker jenkins (got a error while runing docker commands with jenkins user )
+getent group <groupname> (to check the list of users in particular group)
+sudo passwd jenkins to change password of jenkins user
+```
+  
+  
+- even after following the above commands if you face any issue in ruuning commands then run below command
+```
+chmod 777 /var/run/docker.sock
+```
         
 ## Installation of Nginx in centos 
 - yum update -y

@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+   
+    environment {
+        PASS = credentials('docker-password')
+        SSH_KEY = credentials(raghib-key.pem)
+        NAME = "Raghib"
+        LAST_NAME = "Nadim"
+    }
+    stages {
+        stage('Build') { 
+            steps {
+                sh '''
+                    ./maven-example/build/mvn.sh mvn -B -DskipTests clean package
+                    ./maven-example/build/build.sh
+                '''
+            }
+        }
+        stage('Test') { 
+            steps {
+                sh './maven-example/test/mvn.sh mvn test'
+            }
+        }
+        stage('script_push_run') {
+            steps {
+                retry(3){
+                    sh './maven-example/push/push.sh'
+                }
+            }
+        }
+        stage('Deploy') { 
+            steps {
+                sh 'echo "My First Pipeline" > /tmp/pipeline.txt'
+                    sh '''
+                        echo "Hello WOrld from $NAME $LAST_NAME" >> /tmp/pipeline.txt
+                    '''
+                timeout(time: 3, unit: 'SECONDS') {
+                    sh 'sleep 5'
+                }
+            }
+        }
+        stage ("My_env_parameter"){
+            environment {
+                My_Username = credentials('raghib')
+            }
+            steps {
+                sh "echo 'This is my second environment $My_Username'"
+            }
+        }
+    }
+    post {
+        always {
+            echo 'ALWAYS........'
+        }
+        success {
+            echo 'SUCCESS.......'   
+        }
+        failure {
+            echo 'FAILURE.......'
+        }
+        unstable {
+            echo 'UNSTABLE......'
+        }
+    }
+}

@@ -1,20 +1,17 @@
-# Run Jfrog Artifact and setup the Admin
-# Use Git to get the sample code
-# Install Maven to compile and Package the sample code
-# Connect Maven to JFrog
-# Check how the versioning works on JFrog
+1. Run Jfrog Artifact and setup the Admin
+2. Use Git to get the sample code
+3. Install Maven to compile and Package the sample code
+4. Connect Maven to JFrog
+5. Check how the versioning works on JFrog
 
-********************************************
-# Create repo
-## Local
-## Remote
-## Virtual
-raghib-virtual-repo/
-********************************************
-# Create User
-## user and password with privlage
-********************************************
-# Add Distribution elements (which contain add of repo to deploy) to pom.xml
+### Create repo
+- Local
+- Remote
+- Virtual
+
+### Create User: user and password with privlage
+
+### Add Distribution elements (which contain add of repo to deploy) to pom.xml
 ```
 distributionManagement>
     <repository>
@@ -29,8 +26,8 @@ distributionManagement>
     </snapshotRepository>
 </distributionManagement>
 ```
-********************************************
-# Modify setting.xml and add server elements of accessing a repo
+
+### Modify setting.xml and add server elements of accessing a repo
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.1.0"
@@ -89,22 +86,19 @@ distributionManagement>
   </activeProfiles>
 </settings>
 ```
-*********************************************************
-# deploy
+
+### deploy
 ```
 mvn deploy
 ```
-**********************************************************
-**********************************************************
-# Create Group repo which contain all the repo from where you download the package
+
+### Create Group repo which contain all the repo from where you download the package
 ### Get group repo url
-**********************************************************
-# Locate the package required for dowanload
+
+### Locate the package required for download
 ### Add Dependencies
-**********************************************************
-# delete from local maven repwo
-**********************************************************
-# Modify setting.xml with add mirror elements with Group Repo
+### delete from local maven repo
+### Modify setting.xml with add mirror elements with Group Repo
 ### id must be match with server elemets
 ```
 <mirrors>
@@ -116,5 +110,5 @@ mvn deploy
     <mirror>
 <mirrors>
 
-**********************************************************
+
 

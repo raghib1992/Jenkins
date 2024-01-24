@@ -17,10 +17,12 @@ JENKINS_PORT="8081"
 
 
 # Install Tomcat
-REF https://techviewleo.com/install-tomcat-on-amazon-linux/
+- REF: *https://techviewleo.com/install-tomcat-on-amazon-linux/*
 ## Create user tomacat
-```
+```sh
+# Add group tomacat
 sudo groupadd tomcat
+# Add User tomcat
 useradd -s /bin/false -g tomcat -d /opt/tomcat tomcat
 ```
 ## Downaload and install Tomacat
@@ -45,9 +47,9 @@ chown -R tomcat webapps/ work/ logs/ temp/
 ```
 ### configure tomcat
 #### check java_home
-```
+```sh
 alternatives --config java
-output (/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.312.b07-1.amzn2.0.2.x86_64/jre/bin/java)
+# output (/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.312.b07-1.amzn2.0.2.x86_64/jre/bin/java)
 ```
 #### tomcat service conf
 #### edit /etc/systemd/system/tomcat.service

@@ -55,25 +55,26 @@ helm datree test --include-tests [CHART_DIRECTORY]
 
 
 ***************************************
-Jenkins
-Plugins 
+### Jenkins Plugins 
 1. Sonarqube Scanner
 2. Sonar Gerrit
 3. Sonarqube Generic COverage
 4. Sonar Quality Gates
-For using
+### For using
+```
 agent {
   docker {
     image 'jdk-11'
   }
 }
+```
 5. Docker
 6. Docker Pipeline
 7. docker-build-step
 
 
-Configure - 
-https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-jenkins/
+### Configure - 
+*https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-jenkins/*
 1. From Sonar side - Create token
 - Adminostration - security - user- generate token
 2. From Jenkins side
@@ -81,12 +82,12 @@ https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-jenkins/
 - COnfigure tool- SonarQube Server
 
 
-Git checkout 
-https://github.com/raghib1992/CICD_Java_gradle_application.git
+### Git checkout 
+*https://github.com/raghib1992/CICD_Java_gradle_application.git*
 
 
-Sonar code Analysis
-To Generate Pipeline systax
+### Sonar code Analysis
+- To Generate Pipeline systax
 ```
 withSonarQubeEnv('sonarqube-server') {
   sh 'gradle sonarqube'
@@ -94,19 +95,22 @@ withSonarQubeEnv('sonarqube-server') {
 ```
 
 
-Sonar quality feedback
+### Sonar quality feedback
 1. Create webhook in sonarqube
 - Administration - configuration - webhook - add /sonarqube-webhook/ with jenkins url 
 2. In Jenkins
 - add timout in pipleine sonar analysis stage
+```
 def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
 if (qg.status != 'OK') {
     error "Pipeline aborted due to quality gate failure: ${qg.status}"
 }
-Troubleshooting
-https://issues.jenkins.io/browse/JENKINS-58432
+```
 
+### roubleshooting
+*https://issues.jenkins.io/browse/JENKINS-58432*
 
+### Nexus
 1. Create Repo in Nexus for push docker image
 realm - docker bearer token
 2. In Jenkins check for any default repo register
@@ -132,7 +136,7 @@ docker login -u nexus_username -p nexus_pass nexus_ip:8083
 docker login -u admin -p admin123 43.205.228.101:8083
 ```
 
-Create Dockerfile
+### Create Dockerfile
 ```
 FROM 
 
